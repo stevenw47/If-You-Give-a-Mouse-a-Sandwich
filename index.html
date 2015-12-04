@@ -1,0 +1,498 @@
+<html>
+<head>
+<title> Escape Room</title>
+<script src="scripts/processing.js"></script>
+<script type="text/processing" data-processing-target="mycanvas">
+
+PImages kitchen;
+PImages dark;
+PImages light11;
+PImages light22;
+PImages light33;
+PImages cheese;
+PImages subkeypad;
+PImages back;
+PImages locked;
+PImages unlocked;
+PImages fridge;
+PImages hamImage;
+PImages toastImage;
+PImages knifeImage;
+PImages cheeseImage;
+
+PImages flashred;
+PImages flashred2;
+PImages redlight;
+PImages flashyellow;
+PImages flashgreen;
+
+int light1;
+int light2;
+int light3;
+int hold;
+int darkness;
+int location;
+int fridgeshow;
+int ham;
+int timer;
+int toast;
+int fridgelock;
+int knife;
+
+
+int press;
+int pressed;
+int pass;
+int show;
+int delay2;
+int delay;
+
+int yaytimer;
+int yay;
+
+void setup(){
+	size( 1000, 600 );
+	frameRate( 30 );
+	kitchen = loadImage("images/kitchen.fw.png");
+	dark = loadImage("images/dark.fw.png");
+	light11 = loadImage("images/light11.fw.png");
+	light22 = loadImage("images/light22.fw.png");
+	light33 = loadImage("images/light33.fw.png");
+	cheese = loadImage("images/ches.png");
+	subkeypad = loadImage("images/subkeypad.png");
+	locked = loadImage("images/locked.fw.png");
+	unlocked = loadImage("images/unlocked.fw.png");
+	fridge = loadImage("images/fridge.png");
+	hamImage = loadImage("images/hamSlices.png");
+	toastImage = loadImage("images/toast.png");
+	knifeImage = loadImage("images/knifeImage.fw.png");
+	cheeseImage = loadImage("images/cheese.png");
+	
+	flashred = loadImage("images/flashred.png");
+	flashred2 = loadImage("images/flashred2.png");
+	redlight = loadImage("images/redlight.png");
+	flashyellow = loadImage("images/flashyellow.png");
+	flashgreen = loadImage("images/flashgreen.png");
+	
+	oven = loadImage("images/oven.png");
+	thinkingcheese = loadImage("images/thinkingcheese.png");
+	thinkingham = loadImage("images/thinkingham.png");
+	thinkingbread = loadImage("images/thinkingbread.png");
+	yayimage = loadImage("images/yay.png");
+
+	
+	darkness = 0;
+	hold = 0;
+	light1 = 0;
+	light2 = 0;
+	light3 = 0;
+	location = 0;
+	fridgeshow = 0;
+	ham = 0;
+	timer = 0;
+	toast = 0;
+	fridgelock = 0;
+	knife = 0;
+	
+	press = 0;
+	pressed = 0;
+	pass = 5;
+	show = 0;
+	delay = 0;
+	delay2 =0;
+	
+	yaytimer = 0;
+	yay = 0;
+
+}
+
+void draw(){
+	background(0,255,0);
+	//kitchen
+	if(location == 0){
+		image(kitchen,0,0);
+		
+		//toaster
+		if(toast == 0 && mousePressed == true && mouseButton == LEFT && mouseX > 742 && mouseX < 772 && mouseY > 338 && mouseY <375){
+			toast = 1;
+		}
+		
+		if(toast == 1 && fridgeshow == 0){
+			toast = 2;
+		}
+		if(toast == 2){
+			image(toastImage,678,329,60,50);
+		}
+		if(toast == 2 && mousePressed == true && mouseButton == LEFT && mouseX > 678 && mouseY > 329 && mouseX < 678+60 && mouseY < 329 + 50){
+			toast = 3;
+		}
+		if(toast == 3){
+			image(toastImage,940-65,3,60,50);
+		}
+		// knife
+		if(knife == 0 && mousePressed == true && mouseButton == LEFT && mouseX > 410 && mouseX < 444 && mouseY > 291 && mouseY < 331){
+			knife = 1;
+		}
+		if(knife == 1 && mousePressed == true & mouseButton == LEFT && mouseX > 384 && mouseX < 384+10 && mouseY > 296 && mouseY < 296+50){
+			knife = 2;
+		}
+		if(knife == 1){
+			image(knifeImage,384,296,10,50);
+		}
+// LOCATION NOT FINISHED
+		if(knife == 2){
+			image(knifeImage,700,3,10,50);
+		}
+		//fridge
+		image(locked,842,336,50,50);
+		
+		if(light1 == 1 && light2 == 1 && light3 == 1){
+			image(unlocked,842,336,50,50);
+			fridgelock = 1;
+			if(fridgeshow == 0 && mousePressed == true && mouseButton == LEFT && mouseX > 786 && mouseX < 973 && mouseY > 171 && mouseY < 599){
+				fridgeshow = 1;
+				hold = 1;
+			}
+		}
+		else{
+			fridgeshow = 0;
+			fridgelock = 0;
+		}
+		if(fridgeshow == 1){
+			image(fridge,735,111);
+			
+			if(ham == 0 && hold == 0 && mousePressed == true && mouseButton == LEFT && mouseX>859 && mouseX< 907&& mouseY> 337&& mouseY<382){
+				ham = 1;
+			}
+			
+			if(ham <= 0){
+				image(hamImage,859,334,50,50);	
+			}
+		}
+		if(ham == 1){
+			image(hamImage,940,3,50,50);
+		}
+		
+		
+		// Keypad
+		if (mousePressed == true && mouseButton == LEFT && mouseX > 0 && mouseX < 80 && mouseY > 320 && mouseY < 365){
+			location = 1;
+		}
+		// Thinking
+		if (mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
+			image(cheese,460,450);
+			delay = delay + 1;
+				if(delay > 150){
+				delay = 0
+				}
+		}	 
+			
+		if (mousePressed == true && mouseButton == LEFT &&
+			mouseX > 315 && mouseX < 372 &&
+			mouseY > 300 && mouseY < 366){
+			location = 2;
+		}
+		
+		if(mousePressed == true && mouseButton == LEFT){
+			if(mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
+				
+				if(delay < 50){
+				image(thinkingcheese,300,440);
+				}
+				
+				if(delay < 100 && delay > 50){
+				image(thinkingham,300,440);
+				}
+				
+				if(delay < 150 && delay > 100){
+				image(thinkingbread,300,440);
+				}
+			
+			
+			}
+		
+		}
+		text(yaytimer,300,440);
+		yaytimer = yaytimer + 1;
+		
+		if(yaytimer > 100){
+			yaytimer = 0;
+		}
+		if (yay == 1){
+			image(yay,300,440);
+		}
+
+		
+		//light toggle
+		if(mouseX> 168 && mouseX<214 && mouseY > 172 && mouseY < 218){
+			cursor(HAND);
+			if(light1==0 && mousePressed == true && mouseButton == LEFT && hold==0){
+				darkness = darkness + 1;
+				light1 = light1 + 1;
+				hold = 1;
+			}
+		}
+		else{cursor(ARROW);}
+		
+		if(light1==1 && mousePressed == true && mouseButton == LEFT && mouseX> 168 && mouseX<214 && mouseY > 172 && mouseY < 218&& hold==0){
+			darkness = darkness - 1;
+			light1 = light1 - 1;
+			hold = 1;
+		}
+	
+		if(light1==1){
+			image(light11,0,0);
+		}
+	
+		if(light2 == 0 && mousePressed == true && mouseButton == LEFT && mouseX > 250 && mouseX < 305 && mouseY > 154 && mouseY < 211 && hold ==0){
+			darkness = darkness + 1;
+			light2 = light2 + 1;
+			hold = 1;
+		}
+	
+		if(light2 == 1 && mousePressed == true && mouseButton == LEFT && mouseX > 250 && mouseX < 305 && mouseY > 154 && mouseY < 211 && hold ==0){
+			darkness = darkness - 1;
+			light2 = light2 - 1;
+			hold = 1;
+		}
+	
+		if(light2==1){
+			image(light22,0,31);
+		}
+	
+		if(light3 == 0 && mousePressed == true && mouseButton == LEFT && mouseX > 380 && mouseX < 443 && mouseY > 128 && mouseY < 193 && hold ==0){
+			darkness = darkness + 1;
+			light3 = light3 + 1;
+			hold = 1;
+		}
+		if(light3 == 1 && mousePressed == true && mouseButton == LEFT && mouseX > 380 && mouseX < 443 && mouseY > 128 && mouseY < 193 && hold ==0){
+			darkness = darkness - 1;
+			light3 = light3 - 1
+			hold = 1;
+		}
+	
+		if(light3==1){
+			image(light33,0,30);
+		}
+	
+		if(darkness>=1){
+			image(dark,0,0);
+		}
+		if(darkness>=2){
+			image(dark,0,0);
+		}
+		if(darkness>=3){
+			image(dark,0,0);
+		}
+		
+		
+		
+		//mouse
+		if(mouseX> 168 && mouseX<214 && mouseY > 172 && mouseY < 218 || mouseX > 250 && mouseX < 305 && mouseY > 154 && mouseY < 211 || mouseX > 380 && mouseX < 443 && mouseY > 128 && mouseY < 193 || mouseX > 0 && mouseX < 80 && mouseY > 320 && mouseY < 365){
+			cursor(HAND);
+		}
+		else if(mouseX > 786 && mouseX < 973 && mouseY > 171 && mouseY < 599 && fridgeshow != 1 && fridgelock == 1){
+			cursor(HAND);
+			}
+			else if(fridgeshow == 1 && ham !=1 && mouseX>859 && mouseX< 907&& mouseY> 337&& mouseY<382){
+				cursor(HAND);
+			}
+				else if(toast == 0 && fridgeshow == 0 && mouseX > 742 && mouseX < 772 && mouseY > 338 && mouseY <375){
+					cursor(HAND);
+				}
+					else if(toast == 2 && mouseX > 678 && mouseY > 329 && mouseX < 678+60 && mouseY < 329 + 50){
+						cursor(HAND);
+					}
+						else if(knife == 0 && mouseX > 410 && mouseX < 444 && mouseY > 291 && mouseY < 331){
+							cursor(HAND);
+						}
+							else if(knife == 1 && mouseX > 384 && mouseX < 384+10 && mouseY > 296 && mouseY < 296+50){
+								cursor(HAND);
+							}
+		//final else
+		else{
+			cursor(ARROW);
+		}
+	}
+	
+	//keypad
+	if (location == 1){
+		if(mouseX > 15 && mouseX < 175 && mouseY > 500 && mouseY < 600||
+			//147
+			mouseX > 35 && mouseX < 105 && mouseY > 105 && mouseY < 157||
+			mouseX > 35 && mouseX < 105 && mouseY > 180 && mouseY < 230||
+			mouseX > 35 && mouseX < 105 && mouseY > 255 && mouseY < 305||
+			//2580
+			mouseX > 125 && mouseX < 196 && mouseY > 105 && mouseY < 157||
+			mouseX > 125 && mouseX < 196 && mouseY > 180 && mouseY < 230||
+			mouseX > 125 && mouseX < 196 && mouseY > 255 && mouseY < 305||
+			mouseX > 125 && mouseX < 196 && mouseY > 330 && mouseY < 380||
+			//369
+			mouseX > 216 && mouseX < 285 && mouseY > 105 && mouseY < 157||
+			mouseX > 216 && mouseX < 285 && mouseY > 180 && mouseY < 230||
+			mouseX > 216 && mouseX < 285 && mouseY > 255 && mouseY < 305){
+			cursor(HAND);
+		}
+		else{
+			cursor(ARROW);
+		}
+		image(subkeypad,0,0);
+		text(mouseX,400,100);
+		text(mouseY,500,100);
+		image(flashred,97,70);
+	
+		if (mousePressed==true && mouseButton == LEFT && mouseX > 15 && mouseX < 175 && mouseY > 500 && mouseY < 600){
+			location = 0;
+		}
+		//keypad
+		if (
+		//147
+		mouseX > 35 && mouseX < 105 && mouseY > 105 && mouseY < 157||
+		mouseX > 35 && mouseX < 105 && mouseY > 180 && mouseY < 230||
+		mouseX > 35 && mouseX < 105 && mouseY > 255 && mouseY < 305||
+		//2580
+		mouseX > 125 && mouseX < 196 && mouseY > 105 && mouseY < 157||
+		mouseX > 125 && mouseX < 196 && mouseY > 180 && mouseY < 230||
+		mouseX > 125 && mouseX < 196 && mouseY > 255 && mouseY < 305||
+		mouseX > 125 && mouseX < 196 && mouseY > 330 && mouseY < 380||
+		//369
+		mouseX > 216 && mouseX < 285 && mouseY > 105 && mouseY < 157||
+		mouseX > 216 && mouseX < 285 && mouseY > 180 && mouseY < 230||
+		mouseX > 216 && mouseX < 285 && mouseY > 255 && mouseY < 305
+		){
+			if (mousePressed == true && mouseButton == LEFT){
+				if (pressed == 0){
+					press = 1;
+					image(flashyellow,55,65);
+				}
+				if (pressed == 1){
+					press = 2;
+					image(flashyellow,55,65);
+				}
+				if (pressed == 2){
+					press = 3;
+					image(flashyellow,55,65);
+				}
+				if (pressed == 3){
+					press = 4;
+					image(flashyellow,55,65);
+				}
+			}
+		}
+	
+	if(mousePressed == true && mouseButton == LEFT){
+
+		if (mouseX > 216 && mouseX < 285 && mouseY > 255 && mouseY < 305 && pass == 5){
+		pass = 9000
+		}
+		if (mouseX > 125 && mouseX < 196 && mouseY > 255 && mouseY < 305 && pass == 9000){
+		pass = 9800
+		}
+		if (mouseX > 216 && mouseX < 285 && mouseY > 180 && mouseY < 230 && pass == 9800){
+		pass = 986
+		}
+		if (mouseX > 125 && mouseX < 196 && mouseY > 330 && mouseY < 380 && pass == 986){
+		pass = 9860
+		}
+	}
+
+
+
+if (mousePressed == false && location == 1){
+		
+		if (press == 1){
+		pressed = 1;
+		}
+	
+		if (press == 2){
+		pressed = 2;
+		}
+	
+		if (press == 3){
+		pressed = 3;
+		}
+	
+		if (press == 4){
+		pressed = 4;
+		}
+		
+		if (pass == 9860){
+			press = 0
+			delay2 = delay2 + 1
+			
+			if (delay2 > 1 && delay2 < 5 ||
+				delay2 > 10 && delay < 15){
+			image(flashgreen,128,66);
+			}
+			
+			if(delay2 > 20){
+			link("Free.html");
+			}
+		}
+		
+		
+		if(press == 4){
+		delay = 0;
+		show = 1;
+		}
+		
+		if(show == 1){
+		press = 0;
+		delay = delay + 1;
+		image(flashred2,97,70);
+		
+			if (delay > 20/3 && delay < 20/3*2){
+			image(flashred,97,70);
+			image(redlight,0,0);
+			}
+			if (delay > 20/3*2 && delay < 20){
+			image(flashred2,97,70);
+			image(redlight,0,0);
+			}
+			if (delay > 20){
+			image(flashred,97,70);
+			}
+
+		
+			if (delay > 21){
+			show =0;
+			pressed = 0;
+			pass = 5;
+			}
+		}
+	}
+	
+}
+
+	if (location == 2){
+		image(oven,0,0);
+		if(mouseX > 15 && mouseX < 175 && mouseY < 600 && mouseY > 500){
+			cursor(HAND);
+		}
+		else{
+			cursor(ARROW);
+		}	
+		if (mousePressed==true && mouseButton == LEFT && mouseX > 15 && mouseX < 175 && mouseY > 500 && mouseY < 600){
+			location = 0;
+		}
+	}
+
+	if(mousePressed == false){
+		hold = 0;
+	}
+	
+	text(mouseX,100,100);
+	text(mouseY,150,100);
+	text(timer,100,150);
+	text(hold,100,200);
+	
+}
+
+</script>
+<canvas id="mycanvas"></canvas>
+</head>
+
+<body>
+
+</body>
+</html>
