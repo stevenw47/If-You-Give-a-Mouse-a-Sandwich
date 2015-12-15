@@ -238,7 +238,7 @@ void draw(){
 		if(waterlvl >= 100 && waterlvl <=150){
 			image(cheeseImage,295,351+50+40+50-((waterlvl-100/10)),60,50);
 		}
-		if(waterlvl >=150){
+		if(waterlvl >150){
 			if(cheese == 0){
 				image(cheeseImage,295,351+50+40+50-((150-100/10)),60,50);
 			}
@@ -333,7 +333,7 @@ void draw(){
 		
 		if(papergonee == 1){
 			image(papergone,0,0);
-			image(papershow,0,0);
+			image(papershow,548,400,78*3,180);
 		}
 		
 		if (hold == 0 && mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
@@ -809,6 +809,7 @@ if (mousePressed == false && location == 1){
 	text("water1 " + water1,100,500);
 	text("water " + water,100,520);
 	*/
+	
 }
 
 </script>
