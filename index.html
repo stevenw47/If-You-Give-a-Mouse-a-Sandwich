@@ -54,7 +54,9 @@ PImages flashyellow;
 PImages flashgreen;
 
 PImages mouseImage;
-
+PImages boom;
+PImages nopaper;
+PImages blurry;
 
 int light1;
 int light2;
@@ -85,7 +87,8 @@ int yaytimer;
 int yay;
 int temp;
 int temptimer;
-
+int sum;
+boolean notblurry;
 int papergonee;
 
 boolean mousepaper;
@@ -107,7 +110,9 @@ boolean last;
 boolean shipright;
 int st;
 int[][] bulletxy = new int[100][100];
+boolean[] bulletup = new boolean[100];
 int bulletnum;
+int shipHP;
 
 void setup(){
 	size( 1000, 600 );
@@ -145,6 +150,7 @@ void setup(){
 	thinkingham = loadImage("images/thinkingham.png");
 	thinkingbread = loadImage("images/thinkingbread.png");
 	yayimage = loadImage("images/yay.png");
+	backbutton = loadImage("images/back.png");
 	
 	ovenbuttonmin = loadImage("images/oven/ovenbuttonmin.fw.png");
 	ovenbutton85 = loadImage("images/oven/ovenbutton85.fw.png");
@@ -166,9 +172,16 @@ void setup(){
 
 	papergone = loadImage("images/papergone.png");
 	papershow = loadImage("images/papershow.png");
+	yummy = loadImage("images/yummy.png");
+	fire1 = loadImage("images/fire1.png");
+	fire2 = loadImage("images/fire2.png");
+	fire3 = loadImage("images/fire3.png");
 
 
 	mouseImage = loadImage("images/Mouse.fw.png");
+	boom = loadImage("images/boom.png");
+	nopaper = loadImage("images/nopaper.png");
+	blurry = loadImage("images/blurry.png");
 	
 	darkness = 0;
 	hold = 0;
@@ -187,6 +200,7 @@ void setup(){
 	water = -1;
 	cheese = 0;
 	faucetOnce = 0;
+	notblurry = false;
 	
 	press = 0;
 	pressed = 0;
@@ -206,13 +220,47 @@ void setup(){
 	ballstart = false;
 	shipx = 800;
 	last = false;
+	shipHP = 6;
+	
+	showtext = 0;
+	texttimer = 0;
+	gatherfood = 0;
+	yummyvalue = 0;
+	waittimer = 0;
+	
+	wall = new Array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+	wall2 = new Array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+	wall3 = new Array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+	wall4 = new Array(1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+	
+	
+	x = 0;
+	y = 300;
+	a = 0;
+	b = 1;
+	z = 0;
+	wallvalue = 0;
+	colorvalue = 0;
+	wait = 0;
+	game = 1;
+	red = 0;
+	green  = 0;
+	blue = 0;
+	counter = 0;
+	barlength = 0;
+	timer = 0;
+	restart = 0;
 }
 
 void draw(){
 	background(0,255,0);
 	//kitchen
 	if(location == 0){
+		if(mousepaper)
 		image(kitchen,0,0);
+
+		if(!mousepaper)
+		image(nopaper,0,0);
 		
 		//faucet
 		if(mousePressed == true && mouseX > 216 && mouseX < 233 && mouseY > 353 && mouseY < 384){
@@ -357,53 +405,66 @@ void draw(){
 			hold = 1;
 		}
 		// Thinking
-		if(hold == 0 && knife == 2 && ham == 1 && toast == 3 && cheese == 1 && mousePressed == true && mouseButton == LEFT && mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
+		if(mousepaper && hold == 0 && yummyvalue == 1 && mousePressed == true && mouseButton == LEFT && mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
 			papergonee = 1;
+			yummyvalue = 0;
 		}
 		
 		if(papergonee == 1){
 			image(papergone,0,0);
-			image(papershow,548,400,78*3,180);
+			if(!notblurry)
+			image(blurry,548,400,78*3,180);
+			if(mousePressed == true && !notblurry && mouseX >= 548 && mouseX <= 548+(78*3) && mouseY >= 400 && mouseY <= 400+180){
+				location = 999;
+			}
+			if(notblurry){
+				image(papershow,548,400,78*3,180);
+			}
 		}
+		
 		if(location == 0 && mousePressed == true && !mousepaper && hold == 0 && mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
-			//********************************
-			//********************************
-			//********************************
-			//********************************
-			//********************************
-			//********************************
 			for(int i = 0; i < 7; i++){
 				spikeY[i] = 480+((i+3)*(20));
 			}
 			
-			for(int i = 0; i < 2; i++){
+			for(int i = 0; i < 5; i++){
 				ballX[i] = 50;
 				ballY[i] = 50;
-			}
-			for(int i = 0; i < 5; i++){
 				balldown[i] = true;
 				ballright[i] = true;
 				ballxs[i] = Math.floor(Math.random()*5)+5;
 				ballys[i] = Math.floor(Math.random()*5)+5;
 				distance1[i] = 999;
 				distance2[i] = 999;
+				
 			}
-			
+			last = false;
+			shipx = 800;
+			bulletnum = 0;
+			for(int i = 0; i < 100; i++){
+				bulletup[i] = true;
+			}
+			for(int i = 0; i < 100; i++){
+				for(int e = 0; e < 100; e++){
+					bulletxy[i][e] = null;
+				}
+			}
 			ballstart = false;
 			timer = 30;
 			location = 3;
 			hold = 1;
+			shipHP = 6;
 		}
 		
 		
-		if (hold == 0 && mousepaper && mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
+		if (papergonee != 1 && hold == 0 && mousepaper && mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
 			image(cheeseThink,460,450);
 			delay = delay + 1;
 				if(delay > 150){
 				delay = 0
 				}
 		}	 
-		if(hold == 0 && mousePressed == true && mouseButton == LEFT){
+		if(papergonee != 1 && hold == 0 && mousePressed == true && mouseButton == LEFT){
 			if(mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
 				if(delay < 50){
 				image(thinkingcheese,300,440);
@@ -449,7 +510,15 @@ void draw(){
 			light1 = light1 - 1;
 			hold = 1;
 		}
-	
+		if(yummyvalue == 1){
+				ham = -1;
+				cheese = -1;
+				toast = -1;
+				knife = -1;
+				
+				
+				image(yummy,900,10,100,75);
+		}
 		if(light1==1){
 			image(light11,0,0);
 		}
@@ -686,11 +755,14 @@ if (mousePressed == false && location == 1){
 }
 
 	//oven location
-	if (location == 2){
+if (location == 2){
 		image(oven,0,0);
 		image(ovenbuttonmin,780,127);
 		image(ovenbuttonmin,777,223);
 		image(ovenbuttonmin,770,359);
+		text(mouseX,100,100);
+		text(mouseY,100,200);
+		text(texttimer,100,150);
 		
 		if(mouseX > 15 && mouseX < 175 && mouseY < 600 && mouseY > 500){
 			cursor(HAND);
@@ -701,14 +773,96 @@ if (mousePressed == false && location == 1){
 		if (mousePressed == true && mouseButton == LEFT && mouseX > 15 && mouseX < 175 && mouseY > 500 && mouseY < 600){
 			location = 0;
 		}
+			if (mousePressed == true && mouseButton == LEFT && mouseX > 120 && mouseX < 730 && mouseY > 75 && mouseY < 470 && showtext == 0){
+			showtext = 1;
+		}
+			
 		
+			if(showtext == 1 && texttimer < 50 && location == 2){
+				texttimer = texttimer + 1;
+				fill(255,255,255);
+				textSize(25);
+				if(ham == 1 && cheese == 1 && toast == 3 && knife == 2 && temptimer == 10 && temp == 230){
+					if(texttimer > 5 && texttimer < 10||
+						texttimer > 20 && texttimer < 25||
+						texttimer > 35 && texttimer < 40){
+						image(fire1,0,-250);
+				}		
+				if(texttimer > 10 && texttimer < 15 ||
+					texttimer > 25 && texttimer < 30 ){
+					image(fire2,0,-250);
+				}
+				
+				if(texttimer > 15 && texttimer < 20||
+					texttimer > 30 && texttimer < 35 ){
+					image(fire3,0,-250);
+				}
+			
+				waittimer = waittimer + 1;
+				if(waittimer > 20){
+					image(yummy,200,150);
+				}
+				if(texttimer == 30){
+					yummyvalue = 1;
+				}
+			}
+				
+				else if(ham == 1 && cheese == 1 && toast == 3 && knife == 2 && yummyvalue != 1){
+					text("You have not properly set up the temperature",200,300);
+					fill(0,0,0,100);
+					stroke(0,0,0);
+					rect(200,200,500,150);
+				}
+				
+				if(ham != 1 && cheese != 1 && toast != 3 && knife != 2 && yummyvalue != 1){
+					text("You have not gathered all the ingredients",210,300);
+					fill(0,0,0,100);
+					stroke(0,0,0);
+					rect(200,200,500,150);
+				}
+				
+				
+				
+				
+			}
+			if(texttimer == 50 && showtext == 1){
+			showtext = 0;
+			texttimer = 0;
+			
+			}
 		
+			if(yummyvalue == 1){
+				ham = -1;
+				cheese = -1;
+				toast = -1;
+				knife = -1;
+				
+				
+					image(yummy,900,10,100,75);
+			}
+			
+			if(ham == 1){
+				image(hamImage,940,3,50,50);
+			}
+			if(cheese == 1){
+				image(cheeseImage,940-65-60-3,3,60,50);
+			}
+			if(knife == 2){
+				image(knifeImage,940-65-60-3-10-10,3,10,50);
+			}
+			if(toast == 3){
+				image(toastImage,940-65,3,60,50);
+			}
+			
+			
+			
+			
+			
 			if(mouseX > 15 && mouseX < 175 && mouseY > 500 && mouseY < 600||
 			
 			mouseX > 795 && mouseX < 832 && mouseY > 110 && mouseY < 124||
 			mouseX > 835 && mouseX < 868 && mouseY > 152 && mouseY < 169||
 			mouseX > 830 && mouseX < 860 && mouseY > 175 && mouseY < 196||
-			
 			mouseX > 810 && mouseX < 830 && mouseY > 186 && mouseY < 207||
 			mouseX > 790 && mouseX < 807 && mouseY > 190 && mouseY < 200||
 			mouseX > 770 && mouseX < 787 && mouseY > 180 && mouseY < 195||
@@ -721,7 +875,8 @@ if (mousePressed == false && location == 1){
 			mouseX > 820 && mouseX < 847 && mouseY > 409 && mouseY < 428||
 			mouseX > 790 && mouseX < 819 && mouseY > 416 && mouseY < 440||
 			mouseX > 760 && mouseX < 781 && mouseY > 407 && mouseY < 428||
-			mouseX > 750 && mouseX < 771 && mouseY > 382 && mouseY < 404
+			mouseX > 750 && mouseX < 771 && mouseY > 382 && mouseY < 404||
+			mouseX > 120 && mouseX < 730 && mouseY > 75 && mouseY < 470
 			){
 			cursor(HAND);
 		}
@@ -851,6 +1006,11 @@ if (mousePressed == false && location == 1){
 				if(temptimer == 2){
 					image(ovenbuttonmin,770,359);
 				}
+				
+		if(temp == 230 && temptimer == 10){
+			fill(255,0,0,30);
+			rect(0,0,1000,700);		
+		}	
 		}
 
 
@@ -868,15 +1028,15 @@ if (mousePressed == false && location == 1){
 		//	location = 0;
 		//}
 		
-		
-		if(mouseX + 45 > 530 && mouseX - 45 < 530+50 && mouseY + 18 > 100 && mouseY - 18 < 100+500){
+		if(mouseX - 45 <= 0 || mouseX + 45 >= 1000 || mouseY-18 <= 0 || (mouseY +18 >=600 && (mouseX <=420 || mouseX >= 500)))
 			location = 0;
-		}
+		if(mouseX + 45 > 530 && mouseX - 45 < 530+50 && mouseY + 18 > 100 && mouseY - 18 < 100+500)
+			location = 0;
 		
 		rect(120,400,460,50);
-		if(mouseX + 45 > 120 && mouseX - 45 < 120+460 && mouseY + 18 > 400 && mouseY - 18 < 400+50){
+		if(mouseX + 45 > 120 && mouseX - 45 < 120+460 && mouseY + 18 > 400 && mouseY - 18 < 400+50)
 			location = 0;
-		}
+		
 		
 		spikeNum = 0;
 		for(int i = 350; i > 0; i-=50){
@@ -925,7 +1085,7 @@ if (mousePressed == false && location == 1){
 			}
 			text("Time Until Door Open: " + Math.round(timer),380,50);
 			if(timer > 0){
-				timer-=0.03;
+				timer-=0.05;
 			}
 			
 			if(timer <= 30){
@@ -997,8 +1157,10 @@ if (mousePressed == false && location == 1){
 		}
 		//580 1000
 		//fill(Math.random()*255, Math.random()*255, Math.random()*255);
-		ellipse(shipx,460,60,40);
-		if(!last && mouseX > 580+45 && mouseY < 100){
+		if(shipHP != 0)
+		ellipse(shipx,575,60,40);
+
+		if(!last && shipHP != 0 && mouseX > 580+45 && mouseY < 100){
 			if(Math.random() >= 0.5){
 				shipright = true;
 			} else{
@@ -1009,6 +1171,26 @@ if (mousePressed == false && location == 1){
 			last = true;
 		}
 		if(last){
+			rect(0,400,120,50);
+			if(mouseX + 45 > 0 && mouseX - 45 < 0+120 && mouseY + 18 > 400 && mouseY - 18 < 400+50){
+				location = 0;
+			}
+			
+			rect(530,0,50,100);
+			if(mouseX + 45 > 530 && mouseX - 45 < 530+50 && mouseY + 18 > 0 && mouseY - 18 < 0+100){
+				location = 0;
+			}
+			textSize(20);
+			text("Ship HP: ", 800,200);
+			for(int i = 1; i <= 6; i++){
+					if(i<=shipHP)
+						fill(0,255,0);
+					else
+						fill(255,0,0);
+					text("||",880+(i*10),200);
+			}
+
+
 			if(shipright)
 				shipx+=Math.random()*4+2;
 			
@@ -1020,36 +1202,297 @@ if (mousePressed == false && location == 1){
 			if(shipx <= 580+30+10)
 				shipright = true;
 			st+=1;
-			if(st%6== 0 && Math.random() > 0.3){
+			if(st%10== 0 && Math.random() > 0.5){
 				bulletxy[0][bulletnum] = shipx-20;
-				bulletxy[1][bulletnum] = 460-40;
+				bulletxy[1][bulletnum] = 575-40;
+				bulletup[bulletnum] = true;
 				bulletnum++;
 			} 
 			for(int i = 0; i < bulletnum; i++){
 				fill(Math.random()*255, Math.random()*255, Math.random()*255);
 				rect(bulletxy[0][i],bulletxy[1][i],10,20);
+				if(mouseX + 45 > bulletxy[0][i] && mouseX - 45 < bulletxy[0][i]+10 && mouseY + 18 > bulletxy[1][i] && mouseY-18 < bulletxy[1][i]+20){
+					location = 0;
+				}
+
+				if(shipx+30 > bulletxy[0][i] && shipx-30 < bulletxy[0][i]+10 && 575+20 > bulletxy[1][i] && 575-20 < bulletxy[1][i]+20){
+					image(boom,bulletxy[0][i]+5-30,bulletxy[1][i]+10-20,60,40);
+					bulletxy[1][i]=700;
+					shipHP--;
+				}
+
+			}
+			if(shipHP == 0){
+				last = false;
 			}
 			for(int i = 0; i < bulletnum; i++){
-				bulletxy[1][i]-=5;
+				if(bulletup[i]){
+					bulletxy[1][i]-=5;
+				} else{
+					bulletxy[1][i]+=5;
+				}
+				if(bulletxy[1][i] <= 0){
+					bulletup[i] = false;
+				}
 			}
+
 			
 			
 		}
-		text(bulletnum,200,100);
-		
-		
-		
-		text(mouseX,100,100);
-		text(mouseY,100,120);
-		//text("right  " + ballright, 200,200);
-		//text("down  " + balldown, 200,230);
-		
-	
+		if(!last && shipHP == 0){
+			image(blurry,shipx-50,555,100,40);
+			if(mouseX + 45 > shipx-50 && mouseX - 45 < shipx-50+100 && mouseY + 18 > 555 && mouseY - 18 < 555+40){
+				location = 0;
+				mousepaper = true;
+			}
+		}
 	}
 
 
 	if(mousePressed == false){
 		hold = 0;
+	}
+	if(location == 999){
+	
+if(game == 1){	
+	background(255,255,255);
+
+	image(papershow,-10,-100,1600);
+	ellipse(x,y,40,40);
+	fill(0,0,0);
+	timer = timer + 1;
+	if(timer > 20){
+	timer = 0;
+	}
+	image(backbutton,0,500,150,50);
+	if(mousePressed == true && mouseX >= 0 && mouseX <= 150 && mouseY >= 500 && mouseY <= 550){
+		location = 0;
+	}
+
+
+if(x > 800){
+a = 2;
+}
+
+if(x < 20){
+a = 1;
+}
+
+if (a == 1){
+x = x + 2;
+}
+
+if (a == 2){
+x = x - 2;
+}
+
+if (b == 1){
+y = y - 2;
+}
+ 
+if (b == 2){
+y = y + 2;
+} 
+
+if(y < 30){
+b = 2;
+}
+
+
+if (mousePressed == true && mouseButton == LEFT && mouseX > 15 && mouseX < 175 && mouseY > 500 && mouseY < 600){
+			location = 0;
+		}
+		
+		
+		
+fill(0,255,0);
+wallvalue = 0;
+wait = 0;
+sum = 0;
+for(int i = 0; i < 16; i++){
+	sum += wall[i];
+	sum += wall2[i];
+	sum += wall3[i];
+	sum += wall4[i];
+}
+if(sum == 0){
+	notblurry = true;
+}
+
+
+while(wallvalue < 16){
+
+
+ if(y == 50 && x >= -10 + wallvalue*50 && x <= 50+ wallvalue*50 && wall[wallvalue] > 0){
+		wall[wallvalue] = wall[wallvalue] - 1;
+		
+	}
+	if(y == 90 && x >= -10 + wallvalue*50 && x <= 50+ wallvalue*50 && wall2[wallvalue] > 0){
+		b = 2;
+		wall2[wallvalue] = wall2[wallvalue] - 1;
+	}
+	
+	if(y == 120 && x >= -10 + wallvalue*50 && x <= 50+ wallvalue*50 && wall3[wallvalue] > 0 ){
+		b = 2;
+		wall3[wallvalue] = wall3[wallvalue] - 1;
+	
+	}
+	if(y == 150 && x >= -10 + wallvalue*50 && x <= 50+ wallvalue*50 && wall4[wallvalue] > 0 ){
+		b = 2;
+		wall4[wallvalue] = wall4[wallvalue] - 1;
+	
+	}
+// when moving < - then bounch ->
+	if(y > 100 && y < 150 && x < 70 + 50*wallvalue && x > 50 + 50*wallvalue && a == 2 && wall4[wallvalue] > 0
+	){
+		a = 1;
+		wall4[wallvalue] = wall4[wallvalue] - 1;
+	}
+	
+	if(y > 70 && y < 120 && x < 70 + 50*wallvalue && x > 50 + 50*wallvalue && a == 2 && wall3[wallvalue] > 0
+	){
+		a = 1;
+		wall3[wallvalue] = wall3[wallvalue] - 1;
+	}
+	
+	
+	if(y > 40 && y < 90 && x < 70 + 50*wallvalue && x > 50 + 50*wallvalue && wall2[wallvalue] > 0){
+		a = 1;
+		wall2[wallvalue] = wall2[wallvalue] - 1;
+	}
+	
+	if(y > 10 && y <= 60 && x < 70 + 50*wallvalue && x > 50 + 50*wallvalue && a == 2 && wall[wallvalue] > 0){
+		a = 1;
+		wall[wallvalue] = wall[wallvalue] - 1;
+	}
+
+
+	// when moving  -> then bounch <-
+	if(y > 100 && y < 150 && x > 30 + wallvalue*50 && x < 90 + wallvalue*50 && a == 1 && wall4[wallvalue+1] > 0
+	){
+		a = 2;
+		wall4[wallvalue+1] = wall4[wallvalue+1] - 1;
+	}
+	
+	if(y > 70 && y < 120 && x > 30 + wallvalue*50 && x < 90 + wallvalue*50 && a == 1 && wall3[wallvalue+1] > 0
+	){
+		a = 2;
+		wall3[wallvalue+1] = wall3[wallvalue+1] - 1;
+	}
+	
+	if(y > 40 && y < 90 && x > 30 + wallvalue*50 && x < 90 + wallvalue*50 && a == 1 && wall2[wallvalue+1] > 0){
+		a = 2;
+		wall2[wallvalue+1] = wall2[wallvalue+1] - 1;
+	}
+	
+	if(y > 10 && y <= 60 && x > 30 + wallvalue*50 && x < 90 + wallvalue*50 && a == 1 && wall[wallvalue+1] > 0){
+		a = 2;
+		wall[wallvalue+1] = wall[wallvalue+1] - 1;
+	}
+	
+
+	
+	fill(Math.round(Math.random())*255);
+
+
+	if(wall[wallvalue] > 0){ 
+		rect(0+50*wallvalue,10,50,30);
+
+	}
+fill(Math.round(Math.random())*255);
+	if(wall2[wallvalue] > 0){ 
+		rect(0+50*wallvalue,40,50,30);
+	}
+fill(Math.round(Math.random())*255);
+	if(wall3[wallvalue] > 0){ 
+		rect(0+50*wallvalue,70,50,30);
+	}
+fill(Math.round(Math.random())*255);
+	if(wall4[wallvalue] > 0){ 
+		rect(0+50*wallvalue,100,50,30);
+	}
+	fill(0,255,0)
+	
+	
+
+	stroke(0,0,0);
+	wallvalue = wallvalue + 1;
+	counter = counter + 1;
+	if(counter > 3){
+	counter = 0;
+	
+	}
+
+	
+}
+fill(255,255,255);
+rect(mouseX-200+barlength/2,300,400-barlength,10);
+
+if(x > mouseX - 200 && x < mouseX + 200 && y > 280 && y < 300 && barlength < 300){
+b = 1;
+barlength = barlength + 5;
+}
+
+
+
+if(barlength > 300){
+barlength = 300;
+}
+
+
+fill(0,0,0);
+text(mouseX,50,60);
+text(mouseY,50,40);
+
+}
+if(y > 300){
+
+	if(niceword = 1 && game == 1){
+		text ("so close", 200,400);
+	}
+}
+	
+
+
+
+if(y > 600){
+game = 0;
+}
+
+
+if(game == 0 && restart == 0){
+fill(0,0,0);
+text("game over [click anywhere to restart]",100,300);
+	if(mousePressed == true){
+	restart = 1;
+	}
+
+if(restart == 1){
+	wall = new Array (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+	wall2 = new Array (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+	wall3 = new Array (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+	wall4 = new Array (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+	game = 1;
+	x = 0;
+	y = 300;
+	a = 0;
+	b = 1;
+	z = 0;
+	wallvalue = 0;
+	colorvalue = 0;
+	wait = 0;
+	game = 1;
+	red = 0;
+	green  = 0;
+	blue = 0;
+	counter = 0;
+	timer = 0;
+	niceword = 0;
+	restart = 0;
+
+}
+}
+
 	}
 	
 	/*
@@ -1061,6 +1504,7 @@ if (mousePressed == false && location == 1){
 	text("water1 " + water1,100,500);
 	text("water " + water,100,520);
 	*/
+	
 	
 }
 
