@@ -53,6 +53,9 @@ PImages redlight;
 PImages flashyellow;
 PImages flashgreen;
 
+PImages mouseImage;
+
+
 int light1;
 int light2;
 int light3;
@@ -84,6 +87,27 @@ int temp;
 int temptimer;
 
 int papergonee;
+
+boolean mousepaper;
+int[] spikeY = new int[7];
+int spikeNum;
+int[] ballX = new int[5];
+int[] ballY = new int[5];
+int[] ballxs = new int[5];
+int[] ballys = new int[5];
+int[] distance1 = new int[5];
+int[] distance2 = new int[5];
+boolean[] balldown = new boolean[5];
+boolean[] ballright = new boolean[5];
+int ballNum;
+boolean ballstart;
+int timer;
+int shipx;
+boolean last;
+boolean shipright;
+int st;
+int[][] bulletxy = new int[100][100];
+int bulletnum;
 
 void setup(){
 	size( 1000, 600 );
@@ -143,6 +167,8 @@ void setup(){
 	papergone = loadImage("images/papergone.png");
 	papershow = loadImage("images/papershow.png");
 
+
+	mouseImage = loadImage("images/Mouse.fw.png");
 	
 	darkness = 0;
 	hold = 0;
@@ -175,7 +201,11 @@ void setup(){
 	temptimer = 0;
 	
 	papergonee = 0;
-
+	mousepaper = false;
+	spikeNum = 0;
+	ballstart = false;
+	shipx = 800;
+	last = false;
 }
 
 void draw(){
@@ -335,8 +365,38 @@ void draw(){
 			image(papergone,0,0);
 			image(papershow,548,400,78*3,180);
 		}
+		if(location == 0 && mousePressed == true && !mousepaper && hold == 0 && mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
+			//********************************
+			//********************************
+			//********************************
+			//********************************
+			//********************************
+			//********************************
+			for(int i = 0; i < 7; i++){
+				spikeY[i] = 480+((i+3)*(20));
+			}
+			
+			for(int i = 0; i < 2; i++){
+				ballX[i] = 50;
+				ballY[i] = 50;
+			}
+			for(int i = 0; i < 5; i++){
+				balldown[i] = true;
+				ballright[i] = true;
+				ballxs[i] = Math.floor(Math.random()*5)+5;
+				ballys[i] = Math.floor(Math.random()*5)+5;
+				distance1[i] = 999;
+				distance2[i] = 999;
+			}
+			
+			ballstart = false;
+			timer = 30;
+			location = 3;
+			hold = 1;
+		}
 		
-		if (hold == 0 && mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
+		
+		if (hold == 0 && mousepaper && mouseX > 420 && mouseX < 495 && mouseY > 560 && mouseY < 590){
 			image(cheeseThink,460,450);
 			delay = delay + 1;
 				if(delay > 150){
@@ -794,6 +854,198 @@ if (mousePressed == false && location == 1){
 		}
 
 
+	//dark room
+	if (location == 3){
+		fill(0);
+		rect(0,0,1000,600);
+		
+		image(mouseImage,mouseX-45,mouseY-18,90,36);
+		
+		fill(255,100,100);
+		
+		rect(530,100,50,500);
+		//if(mouseX + 45 > ONE && mouseX - 45 < ONE+THREE && mouseY + 18 > TWO && mouseY - 18 < TWO+FOUR){
+		//	location = 0;
+		//}
+		
+		
+		if(mouseX + 45 > 530 && mouseX - 45 < 530+50 && mouseY + 18 > 100 && mouseY - 18 < 100+500){
+			location = 0;
+		}
+		
+		rect(120,400,460,50);
+		if(mouseX + 45 > 120 && mouseX - 45 < 120+460 && mouseY + 18 > 400 && mouseY - 18 < 400+50){
+			location = 0;
+		}
+		
+		spikeNum = 0;
+		for(int i = 350; i > 0; i-=50){
+			
+			if(spikeY[spikeNum] > 480){
+				rect(i,spikeY[spikeNum],20,200);
+				
+				if(mouseX + 45 > i && mouseX - 45 < i+20 && mouseY + 18 > spikeY[spikeNum] && mouseY - 18 < spikeY[spikeNum]+200){
+					location = 0;
+				}
+			} else{
+				rect(i,480,20,200);
+				
+				if(mouseX + 45 > i && mouseX - 45 < i+20 && mouseY + 18 > 480 && mouseY - 18 < 480+200){
+					location = 0;
+				}
+			}
+			
+			if(spikeY[spikeNum] == 480){
+				spikeY[spikeNum] = 660;
+			}
+			
+			spikeNum++;
+		}
+		
+		for(int i = 0; i < 7; i++){
+			spikeY[i]-=10;
+		}
+		
+		if(!ballstart && mouseX + 45 > 0 && mouseX - 45 < 530 && mouseY +18 > 0 && mouseY - 18 < 355){
+			ballstart = true;
+		}
+		//ball border x 0, 530 y 0 400
+		if(ballstart){
+			if(timer >=0){
+			
+				rect(0,400,120,50);
+				if(mouseX + 45 > 0 && mouseX - 45 < 0+120 && mouseY + 18 > 400 && mouseY - 18 < 400+50){
+					location = 0;
+				}
+				
+				rect(530,0,50,100);
+				if(mouseX + 45 > 530 && mouseX - 45 < 530+50 && mouseY + 18 > 0 && mouseY - 18 < 0+100){
+					location = 0;
+				}
+			}
+			text("Time Until Door Open: " + Math.round(timer),380,50);
+			if(timer > 0){
+				timer-=0.03;
+			}
+			
+			if(timer <= 30){
+				ballNum = 1;
+			} 
+			
+			if(timer <=25){
+				ballNum = 2;
+			}
+			if(timer <=20){
+				ballNum = 3;
+			}
+			if(timer <=15){
+				ballNum = 4;
+			}
+			if(timer <=10){
+				ballNum = 5;
+			}
+			
+			for(int i = 0; i < ballNum; i++){
+				ellipse(ballX[i], ballY[i],30,30);
+			}
+			
+			for(int i = 0; i < ballNum; i++){
+				if(ballright[i]){
+					ballX[i]+=ballxs[i];
+				}
+				if(!ballright[i]){
+					ballX[i]-=ballxs[i];
+				} 
+				if(balldown[i]){
+					ballY[i]+=ballys[i];
+				}
+				if(!balldown[i]){
+					ballY[i]-=ballys[i];
+				}
+			}
+			
+			for(int i = 0; i < ballNum; i++){
+				if(ballX[i] - 15 <= 0){
+					ballright[i] = true;
+				}
+				if(ballX[i] + 15 >= 530){
+					ballright[i] = false;
+				}
+				
+				if(ballY[i] - 15 <= 0){
+					balldown[i] = true;
+				}
+				if(ballY[i] + 15 >= 400){
+					balldown[i] = false;
+				}
+			}
+			for(int i = 0; i < ballNum; i++){
+				distance1[i] = Math.floor(sqrt((ballX[i]-mouseX-21)*(ballX[i]-mouseX-21)+(ballY[i]-mouseY)*(ballY[i]-mouseY)));
+				distance2[i] = Math.floor(sqrt((ballX[i]-mouseX+21)*(ballX[i]-mouseX+21)+(ballY[i]-mouseY)*(ballY[i]-mouseY)));
+			}
+			
+			for(int i = 0; i < ballNum; i++){
+				if(distance1[i] >= 0 && distance1[i] <= 20+13){
+					location = 0;
+				}
+				
+				if(distance2[i] >= 0 && distance2[i] <= 20+3){
+					location = 0;
+				}
+			}
+			
+		}
+		//580 1000
+		//fill(Math.random()*255, Math.random()*255, Math.random()*255);
+		ellipse(shipx,460,60,40);
+		if(!last && mouseX > 580+45 && mouseY < 100){
+			if(Math.random() >= 0.5){
+				shipright = true;
+			} else{
+				shipright = false;
+			}
+			st = 0;
+			bulletnum = 0;
+			last = true;
+		}
+		if(last){
+			if(shipright)
+				shipx+=Math.random()*4+2;
+			
+			if(!shipright)
+				shipx-=Math.random()*4+2;
+				
+			if(shipx >= 1000-30-10)
+				shipright = false;
+			if(shipx <= 580+30+10)
+				shipright = true;
+			st+=1;
+			if(st%6== 0 && Math.random() > 0.3){
+				bulletxy[0][bulletnum] = shipx-20;
+				bulletxy[1][bulletnum] = 460-40;
+				bulletnum++;
+			} 
+			for(int i = 0; i < bulletnum; i++){
+				fill(Math.random()*255, Math.random()*255, Math.random()*255);
+				rect(bulletxy[0][i],bulletxy[1][i],10,20);
+			}
+			for(int i = 0; i < bulletnum; i++){
+				bulletxy[1][i]-=5;
+			}
+			
+			
+		}
+		text(bulletnum,200,100);
+		
+		
+		
+		text(mouseX,100,100);
+		text(mouseY,100,120);
+		//text("right  " + ballright, 200,200);
+		//text("down  " + balldown, 200,230);
+		
+	
+	}
 
 
 	if(mousePressed == false){
