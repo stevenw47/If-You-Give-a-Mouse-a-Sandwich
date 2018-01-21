@@ -1,6 +1,7 @@
 <html>
 <head>
-<title> Escape Room</title>
+<title>If You Give a Mouse a Sandwich</title>
+<link rel="icon" href="sandwich.ico">
 <script src="scripts/processing.js"></script>
 <script type="text/processing" data-processing-target="mycanvas">
 
@@ -490,8 +491,8 @@ void draw(){
 		}
 		//oven
 		if (hold == 0 && mousePressed == true && mouseButton == LEFT && mouseX > 315 && mouseX < 372 && mouseY > 300 && mouseY < 366){
-			location = 2;
 			hold = 1;
+			location = 2;
 		}
 		
 		//light toggle
@@ -760,9 +761,6 @@ if (location == 2){
 		image(ovenbuttonmin,780,127);
 		image(ovenbuttonmin,777,223);
 		image(ovenbuttonmin,770,359);
-		text(mouseX,100,100);
-		text(mouseY,100,200);
-		text(texttimer,100,150);
 		
 		if(mouseX > 15 && mouseX < 175 && mouseY < 600 && mouseY > 500){
 			cursor(HAND);
@@ -814,7 +812,7 @@ if (location == 2){
 					rect(200,200,500,150);
 				}
 				
-				if(ham != 1 && cheese != 1 && toast != 3 && knife != 2 && yummyvalue != 1){
+				if((ham != 1 || cheese != 1 || toast != 3 || knife != 2) && yummyvalue != 1){
 					text("You have not gathered all the ingredients",210,300);
 					fill(0,0,0,100);
 					stroke(0,0,0);
@@ -1342,7 +1340,7 @@ while(wallvalue < 16){
 		wall4[wallvalue] = wall4[wallvalue] - 1;
 	
 	}
-// when moving < - then bounch ->
+// when moving < - then bounce ->
 	if(y > 100 && y < 150 && x < 70 + 50*wallvalue && x > 50 + 50*wallvalue && a == 2 && wall4[wallvalue] > 0
 	){
 		a = 1;
@@ -1367,7 +1365,7 @@ while(wallvalue < 16){
 	}
 
 
-	// when moving  -> then bounch <-
+	// when moving  -> then bounce <-
 	if(y > 100 && y < 150 && x > 30 + wallvalue*50 && x < 90 + wallvalue*50 && a == 1 && wall4[wallvalue+1] > 0
 	){
 		a = 2;
@@ -1440,9 +1438,6 @@ barlength = 300;
 }
 
 
-fill(0,0,0);
-text(mouseX,50,60);
-text(mouseY,50,40);
 
 }
 if(y > 300){
@@ -1494,18 +1489,6 @@ if(restart == 1){
 }
 
 	}
-	
-	/*
-	text("X " + mouseX,100,100);
-	text("Y " + mouseY,150,100);
-	text("hold " + hold,100,200);
-	text("faucet " + faucet,100,480);
-	text("waterlvl " + waterlvl,100,490);
-	text("water1 " + water1,100,500);
-	text("water " + water,100,520);
-	*/
-	
-	
 }
 
 </script>
